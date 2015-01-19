@@ -1,6 +1,8 @@
 rolemodel
 =========
 
+[![Code Health](https://landscape.io/github/scopely-devops/rolemodel/master/landscape.svg)](https://landscape.io/github/scopely-devops/rolemodel/master)
+
 **Rolemodel** is a command line tool that helps you set up and maintain
 cross-account IAM roles for the purpose of using them in the new
 [switch role](https://aws.amazon.com/blogs/aws/new-cross-account-access-in-the-aws-management-console/)
