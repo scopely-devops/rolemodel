@@ -36,10 +36,10 @@ The ``rolemodel`` tool:
 * Uses CloudFormation to create a consistent set of roles across all assumabe
   accounts you specify.
 * Creates IAM groups in the master account to control which IAM users in the
-  master account can assume which roles in which assumable accounts.  If you
+  master account can assume which roles in each assumable account.  If you
   have defined four roles and you have 4 assumable accounts, ``rolemodel`` will
   create a total of 16 groups in the master account.
-* Optionally, ``rolemodel`` can also be used to map existing IAM users in the
+* Optionally, ``rolemodel`` can be used to map existing IAM users in the
   master account into the appropriate roles for each of the assumable
   accounts.  It will not create IAM users for you.
 
@@ -165,6 +165,11 @@ Once you have defined this file for your accounts, you can run the command to
 sync your groups with this file.
 
     $ rolemodel <path to config file> sync_users <path to user map file>
+
+When you run this command, ``rolemodel`` will synchronize the users in each IAM
+group with the information defined in your user map.  That means that some
+users may be removed from groups if they no longer appear in the user map for
+that group.
 
 The ``sample`` directory includes an example of a user map file you can edit
 for your purposes.
