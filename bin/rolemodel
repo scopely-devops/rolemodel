@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+# Copyright (c) 2015 Scopely, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"). You
+# may not use this file except in compliance with the License. A copy of
+# the License is located at
+#
+# http://aws.amazon.com/apache2.0/
+#
+# or in the "license" file accompanying this file. This file is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+# ANY KIND, either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
+import logging
+
+import yaml
+import click
+
+from rolemodel import RoleModel
+
+
+@click.group()
+@click.argument(
+    'config',
+    type=click.File('rb'),
+    envvar='ROLEMODEL_CONFIG'
+)
+@click.option(
+    '--debug/--no-debug',
+    default=False,
+    help='Turn on debugging output'
+)
+@click.pass_context
+def cli(ctx, config=None, debug=False):
+    config = yaml.load(config)
+    ctx.obj['debug'] = debug
+    ctx.obj['config'] = config
+
+@cli.command()
+@click.pass_context
+def update(ctx):
+    rm = RoleModel(ctx.obj['config'], ctx.obj['debug'])
+    click.echo('Updating ...')
+    rm.update()
+    click.echo('...done')
+
+
+@cli.command()
+@click.pass_context
+def list(ctx):
+    rm = RoleModel(ctx.obj['config'], ctx.obj['debug'])
+    data = rm.list()
+    for acct in data:
+        click.echo('For account: %s' % acct)
+        for role in data[acct]:
+            click.echo('%s' % role)
+
+
+@cli.command()
+@click.pass_context
+def delete(ctx):
+    rm = RoleModel(ctx.obj['config'], ctx.obj['debug'])
+    click.echo('Deleting ...')
+    rm.delete()
+    click.echo('...done')
+
+@cli.command()
+@click.argument(
+    'user-file',
+    type=click.File('rb')
+)
+@click.pass_context
+def sync_users(ctx, user_file):
+    user_file = yaml.load(user_file)
+    rm = RoleModel(ctx.obj['config'], ctx.obj['debug'])
+    click.echo('Syncing Users')
+    rm.sync_users(user_file)
+    click.echo('...done')
+
+
+if __name__ == '__main__':
+    cli(obj={})

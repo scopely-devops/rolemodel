@@ -1,0 +1,16 @@
+---
+prod:
+  AdminRole:
+    - carol@foobar.com
+  SuperUserRole:
+    - bob@foobar.com
+  FinanceRole:
+    - ted@foobar.com
+cdn:
+  AdminRole:
+    - carol@foobar.com
+  SuperUserRole:
+    - bob@foobar.com
+    - alice@foobar.com
+
+    

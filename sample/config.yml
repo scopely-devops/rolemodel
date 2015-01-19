@@ -1,0 +1,11 @@
+---
+assumable_roles: roles.cf
+master_account_id: 123456789012
+master_account_profile: dev
+assumable_accounts:
+  -
+    name: prod
+    profile: prod
+  -
+    name: cdn
+    profile: cdn

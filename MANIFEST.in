@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+include requirements.txt
+include rolemodel/_version
+recursive-include sample *.yml *.cf

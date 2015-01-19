@@ -1,0 +1,288 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "This stack contains all of the assumable roles.  These roles need to be created in each of the accounts into which you wish users to be able to switch.  The AssumingAccountID parameter is the 12-digit ID for the account which will be used to actually perform the AssumeRole operation.",
+    
+    "Parameters": {
+        "AssumingAccountID": {
+            "Type": "String",
+            "Description" : "The 12-digit ID for the account that will assume the roles",
+            "MinLength": 12,
+            "MaxLength": 12,
+            "AllowedPattern": "[0-9]+",
+            "ConstraintDescription": "Must contain a 12 digit account ID"
+        }
+    },
+    
+    "Resources": {
+        "AdminRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version" : "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS":
+                                { "Fn::Join": [
+                                    ":", [
+                                        "arn",
+                                        "aws",
+                                        "iam",
+                                        "",
+                                        { "Ref": "AssumingAccountID" },
+                                        "root"]]
+                                }
+                            },
+                            "Action": "sts:AssumeRole",
+                            "Condition": {
+                                "Null": {
+                                    "aws:MultiFactorAuthAge": false
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "AdminRolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "AdminRolePolicy",
+                "PolicyDocument": {
+                    "Version" : "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "*",
+                            "Resource": "*"
+                        }                    
+                    ]
+                },
+                "Roles": [ { "Ref": "AdminRole" } ]
+            }
+        },
+        "SuperUserRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version" : "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS":
+                                { "Fn::Join": [
+                                    ":", [
+                                        "arn",
+                                        "aws",
+                                        "iam",
+                                        "",
+                                        { "Ref": "AssumingAccountID" },
+                                        "root"]]
+                                }
+                            },
+                            "Action": "sts:AssumeRole",
+                            "Condition": {
+                                "Null": {
+                                    "aws:MultiFactorAuthAge": false
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "SuperUserRolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "SuperUserRolePolicy",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Action": [
+                                "iam:Add*",
+                                "iam:Create*",
+                                "iam:DeactivateMfaDevice",
+                                "iam:Delete*",
+                                "iam:EnableMfaDevice",
+                                "iam:GenerateCredentialReport",
+                                "iam:Put*",
+                                "iam:Remove*",
+                                "iam:ResyncMfaDevice",
+                                "iam:Update*"
+                            ],
+                            "Effect": "Deny",
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": "*",
+                            "Resource": "*"
+                        }                    
+                    ]
+                },
+                "Roles": [ { "Ref": "SuperUserRole" } ]
+            }
+        },
+        "ReadOnlyRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version" : "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS":
+                                { "Fn::Join": [
+                                    ":", [
+                                        "arn",
+                                        "aws",
+                                        "iam",
+                                        "",
+                                        { "Ref": "AssumingAccountID" },
+                                        "root"]]
+                                }
+                            },
+                            "Action": "sts:AssumeRole",
+                            "Condition": {
+                                "Null": {
+                                    "aws:MultiFactorAuthAge": false
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "ReadOnlyRolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "ReadOnlyRolePolicy",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Action": [
+                                "appstream:Get*",
+                                "autoscaling:Describe*",
+                                "cloudformation:DescribeStacks",
+                                "cloudformation:DescribeStackEvents",
+                                "cloudformation:DescribeStackResources",
+                                "cloudformation:GetTemplate",
+                                "cloudformation:List*",
+                                "cloudfront:Get*",
+                                "cloudfront:List*",
+                                "cloudtrail:DescribeTrails",
+                                "cloudtrail:GetTrailStatus",
+                                "cloudwatch:Describe*",
+                                "cloudwatch:Get*",
+                                "cloudwatch:List*",
+                                "directconnect:Describe*",
+                                "dynamodb:GetItem",
+                                "dynamodb:BatchGetItem",
+                                "dynamodb:Query",
+                                "dynamodb:Scan",
+                                "dynamodb:DescribeTable",
+                                "dynamodb:ListTables",
+                                "ec2:Describe*",
+                                "elasticache:Describe*",
+                                "elasticbeanstalk:Check*",
+                                "elasticbeanstalk:Describe*",
+                                "elasticbeanstalk:List*",
+                                "elasticbeanstalk:RequestEnvironmentInfo",
+                                "elasticbeanstalk:RetrieveEnvironmentInfo",
+                                "elasticloadbalancing:Describe*",
+                                "elastictranscoder:Read*",
+                                "elastictranscoder:List*",
+                                "iam:List*",
+                                "iam:Get*",
+                                "opsworks:Describe*",
+                                "opsworks:Get*",
+                                "route53:Get*",
+                                "route53:List*",
+                                "redshift:Describe*",
+                                "redshift:ViewQueriesInConsole",
+                                "rds:Describe*",
+                                "rds:ListTagsForResource",
+                                "s3:Get*",
+                                "s3:List*",
+                                "sdb:GetAttributes",
+                                "sdb:List*",
+                                "sdb:Select*",
+                                "ses:Get*",
+                                "ses:List*",
+                                "sns:Get*",
+                                "sns:List*",
+                                "sqs:GetQueueAttributes",
+                                "sqs:ListQueues",
+                                "sqs:ReceiveMessage",
+                                "storagegateway:List*",
+                                "storagegateway:Describe*"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": "*"
+                        }
+                    ]
+                },
+                "Roles": [ { "Ref": "ReadOnlyRole" } ]
+            }
+        },
+        "FinanceRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version" : "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS":
+                                { "Fn::Join": [
+                                    ":", [
+                                        "arn",
+                                        "aws",
+                                        "iam",
+                                        "",
+                                        { "Ref": "AssumingAccountID" },
+                                        "root"]]
+                                }
+                            },
+                            "Action": "sts:AssumeRole",
+                            "Condition": {
+                                "Null": {
+                                    "aws:MultiFactorAuthAge": false
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "FinanceRolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "AdminRolePolicy",
+                "PolicyDocument": {
+                    "Version" : "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "aws-portal:View*"],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Deny",
+                            "Action": "aws-portal:*Account",
+                            "Resource": "*"
+                        }
+                    ]
+                },
+                "Roles": [ { "Ref": "FinanceRole" } ]
+            }
+        }
+    }
+}  
