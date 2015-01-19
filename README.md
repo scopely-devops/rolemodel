@@ -98,11 +98,12 @@ information in the config file.
 * **master_account_profile** is the name of the profile within your AWS config
   or credential file that contains the credentials for the master account.
 * for each assumable account:
-  * **name** is the symbolic name of the assumable account.  This name is used
+    * **name** is the symbolic name of the assumable account.  This name is used
     when constructing the group names in the master account.
-  * **profile** is the name of the profile within your AWS config or credential
-    file that contains the credentials for this assumable account.  These
-    credentials must be able to create IAM roles within the assumabl account.
+    * **profile** is the name of the profile within your AWS config or
+    credential file that contains the credentials for this assumable account.
+    These credentials must be able to create IAM roles within the assumabl
+    account.
 
 Once you have the IAM roles defined and your configuration file created you can
 run the ``rolemodel`` command line tool.
@@ -171,8 +172,11 @@ Groups In Master Account
 
 The name of each group created in the master account will be of the form:
 
-    RM.<assumble account name>.<role name>
+    <assumble account name>.<role name>
 
 The ``assumable account name`` comes from the name you provide for the
 assumable account in the config file.  The ``role name`` comes from the name
 used for the role in the CloudFormation template.
+
+In addition, all groups created by ``rolemodel`` will have a path of
+/RoleModel/ to help separate them from other resources in IAM.
