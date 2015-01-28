@@ -110,7 +110,7 @@ class RoleModel(object):
                 self.config['master_account_id'])
             if stack.exists():
                 list_data[acct['name']] = [
-                    r.physical_name for r in stack.roles()]
+                    (r.physical_name, r.arn) for r in stack.roles()]
         return list_data
 
     def _check_for_groups(self, iam, acct, stack):

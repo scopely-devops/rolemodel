@@ -51,9 +51,9 @@ def list(ctx):
     rm = RoleModel(ctx.obj['config'], ctx.obj['debug'])
     data = rm.list()
     for acct in data:
-        click.echo('For account: %s' % acct)
-        for role in data[acct]:
-            click.echo('%s' % role)
+        click.echo('Account: %s' % acct)
+        for role, role_arn in data[acct]:
+            click.echo('%s (%s)' % (role, role_arn))
 
 
 @cli.command()
