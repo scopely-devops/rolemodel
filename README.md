@@ -179,7 +179,7 @@ Groups In Master Account
 
 The name of each group created in the master account will be of the form:
 
-    <assumble account name>.<role name>
+    <assumable account name>.<role name>
 
 The ``assumable account name`` comes from the name you provide for the
 assumable account in the config file.  The ``role name`` comes from the name
