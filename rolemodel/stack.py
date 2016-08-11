@@ -61,37 +61,49 @@ class Stack(object):
                 msg = 'Could not create stack %s: %s' % (self.name, status)
                 raise ValueError(msg)
 
+    def _validate_template(self, template_body):
+        LOG.debug('validate_template')
+        response = self._cfn.validate_template(TemplateBody=template_body)
+        return response['Parameters']
+
     def _create(self):
         LOG.debug('create_stack: stack_name=%s', self.name)
         template_body = open(self._template_path).read()
-        try:
-            response = self._cfn.create_stack(
-                StackName=self.name, TemplateBody=template_body,
-                Capabilities=['CAPABILITY_IAM'],
-                Parameters=[{'ParameterKey': 'AssumingAccountID',
-                             'ParameterValue': self._assuming_account_id,
-                             'UsePreviousValue': False}])
-            LOG.debug(response)
-        except Exception:
-            LOG.exception('Unable to create stack')
+        self._validate_template(template_body)
+
+        response = self._cfn.create_stack(
+            StackName=self.name, TemplateBody=template_body,
+            Capabilities=['CAPABILITY_IAM'],
+            Parameters=[{'ParameterKey': 'AssumingAccountID',
+                         'ParameterValue': self._assuming_account_id,
+                         'UsePreviousValue': False}])
+        LOG.debug(response)
         self.wait()
 
     def _update(self):
         LOG.debug('update_stack: stack_name=%s', self.name)
         template_body = open(self._template_path).read()
         try:
+            template_parameters = self._validate_template(template_body)
+            parameters = [{'ParameterKey': 'AssumingAccountID',
+                             'ParameterValue': self._assuming_account_id,
+                             'UsePreviousValue': False}]
+
+            # Use previous parameter values for any extra parameters defined in
+            # the CloudFormation stack.
+            for p in template_parameters:
+                parameters.append({'ParameterKey': p['ParameterKey'], 'UsePreviousValue': True})
+
             response = self._cfn.update_stack(
                 StackName=self.name, TemplateBody=template_body,
                 Capabilities=['CAPABILITY_IAM'],
-                Parameters=[{'ParameterKey': 'AssumingAccountID',
-                             'ParameterValue': self._assuming_account_id,
-                             'UsePreviousValue': False}])
+                Parameters=parameters)
             LOG.debug(response)
         except Exception as e:
-            if 'ValidationError' in str(e):
+            if 'No updates are to be performed' in str(e):
                 LOG.info('No Updates Required')
             else:
-                LOG.exception('Unable to update stack')
+                raise
         self.wait()
 
     def update(self):
@@ -121,8 +133,5 @@ class Stack(object):
 
     def delete(self):
         LOG.debug('delete(): stack_name=%s', self.name)
-        try:
-            response = self._cfn.delete_stack(StackName=self.name)
-            LOG.debug(response)
-        except Exception:
-            LOG.exception('Unable to delete stack: %s', self.name)
+        response = self._cfn.delete_stack(StackName=self.name)
+        LOG.debug(response)
