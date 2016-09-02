@@ -48,6 +48,8 @@ class RoleModel(object):
         else:
             self.set_logger('rolemodel', logging.INFO)
         self.config = config
+	if not 'stack_name' in self.config:
+            self.config['stack_name'] = "RoleModel"
 
     def debug(self):
         self.set_logger('rolemodel', logging.DEBUG)
