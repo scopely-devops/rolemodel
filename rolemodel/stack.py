@@ -73,7 +73,7 @@ class Stack(object):
 
         response = self._cfn.create_stack(
             StackName=self.name, TemplateBody=template_body,
-            Capabilities=['CAPABILITY_IAM'],
+            Capabilities=['CAPABILITY_IAM','CAPABILITY_NAMED_IAM'],
             Parameters=[{'ParameterKey': 'AssumingAccountID',
                          'ParameterValue': self._assuming_account_id,
                          'UsePreviousValue': False}])
@@ -96,7 +96,7 @@ class Stack(object):
 
             response = self._cfn.update_stack(
                 StackName=self.name, TemplateBody=template_body,
-                Capabilities=['CAPABILITY_IAM'],
+                Capabilities=['CAPABILITY_IAM','CAPABILITY_NAMED_IAM'],
                 Parameters=parameters)
             LOG.debug(response)
         except Exception as e:

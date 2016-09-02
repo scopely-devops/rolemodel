@@ -95,6 +95,7 @@ information in the config file.
 
 * **assumable_roles** should be the path to the CloudFormation template
   defining the IAM roles that will be created in each assumable account.
+* **stack_name** is the name of the CloudFormation stack that will be created.
 * **master_account_id** is the 12-digit ID for the account that will be the
   master account.
 * **master_account_profile** is the name of the profile within your AWS config

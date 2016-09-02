@@ -82,7 +82,7 @@ class RoleModel(object):
             session = botocore.session.get_session()
             session.profile = acct['profile']
             stack = rolemodel.stack.Stack(
-                session, 'RoleModel', self.config['assumable_roles'],
+                session, self.config['stack_name'], self.config['assumable_roles'],
                 self.config['master_account_id'])
             stack.update()
         self.update_groups()
@@ -94,7 +94,7 @@ class RoleModel(object):
             session = botocore.session.get_session()
             session.profile = acct['profile']
             stack = rolemodel.stack.Stack(
-                session, 'RoleModel', self.config['assumable_roles'],
+                session, self.config['stack_name'], self.config['assumable_roles'],
                 self.config['master_account_id'])
             stack.delete()
         self.delete_groups()
@@ -106,7 +106,7 @@ class RoleModel(object):
             session = botocore.session.get_session()
             session.profile = acct['profile']
             stack = rolemodel.stack.Stack(
-                session, 'RoleModel', self.config['assumable_roles'],
+                session, self.config['stack_name'], self.config['assumable_roles'],
                 self.config['master_account_id'])
             if stack.exists():
                 list_data[acct['name']] = [
@@ -136,7 +136,7 @@ class RoleModel(object):
             session = botocore.session.get_session()
             session.profile = acct['profile']
             stack = rolemodel.stack.Stack(
-                session, 'RoleModel', self.config['assumable_roles'],
+                session, self.config['stack_name'], self.config['assumable_roles'],
                 self.config['master_account_id'])
             if stack.exists():
                 self._check_for_groups(iam, acct, stack)
@@ -162,7 +162,7 @@ class RoleModel(object):
                 session = botocore.session.get_session()
                 session.profile = acct['profile']
                 stack = rolemodel.stack.Stack(
-                    session, 'RoleModel', self.config['assumable_roles'],
+                    session, self.config['stack_name'], self.config['assumable_roles'],
                     self.config['master_account_id'])
                 if stack.exists():
                     for role in stack.roles():
